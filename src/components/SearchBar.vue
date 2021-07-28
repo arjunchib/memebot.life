@@ -1,6 +1,7 @@
 <template>
   <input
-    v-model="searchStr"
+    v-model="searchText"
+    class="search-bar"
     type="search"
     placeholder="Search"
     @input="onInput"
@@ -27,11 +28,15 @@ export default defineComponent({
       type: Array,
       required: true,
     },
+    modelValue: {
+      type: String,
+      required: true,
+    },
   },
-  emits: ["update:matches"],
+  emits: ["update:matches", "update:modelValue"],
   data() {
     return {
-      searchStr: "",
+      searchText: "",
       memeMap: new Map(),
     };
   },
@@ -50,15 +55,23 @@ export default defineComponent({
         ...new Set(
           [...this.memeMap.entries()]
             .filter(([name]: string) => {
-              return name.toLowerCase().includes(this.searchStr.toLowerCase());
+              return name.toLowerCase().includes(this.searchText.toLowerCase());
             })
             .map((entry: [string, Meme]) => entry[1])
         ),
       ];
       this.$emit("update:matches", memes);
+      this.$emit("update:modelValue", this.searchText);
     },
   },
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.search-bar {
+  font-size: 32px;
+  border: 2px solid black;
+  border-radius: 7px;
+  padding: 7px;
+}
+</style>
