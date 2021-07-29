@@ -9,19 +9,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-
-interface Meme {
-  id: number;
-  name: string;
-  commands: string[];
-}
+import { defineComponent, PropType } from "vue";
+import { Meme } from "../models";
 
 export default defineComponent({
   name: "SearchBar",
   props: {
     memes: {
-      type: Array,
+      type: Array as PropType<Meme[]>,
       required: true,
     },
     matches: {
@@ -37,7 +32,7 @@ export default defineComponent({
   data() {
     return {
       searchText: "",
-      memeMap: new Map(),
+      memeMap: new Map<string, Meme>(),
     };
   },
   watch: {
@@ -51,15 +46,12 @@ export default defineComponent({
   },
   methods: {
     onInput() {
-      const memes = [
-        ...new Set(
-          [...this.memeMap.entries()]
-            .filter(([name]: string) => {
-              return name.toLowerCase().includes(this.searchText.toLowerCase());
-            })
-            .map((entry: [string, Meme]) => entry[1])
-        ),
-      ];
+      const matchedMemes = [...this.memeMap.entries()]
+        .filter(([name]) => {
+          return name.toLowerCase().includes(this.searchText.toLowerCase());
+        })
+        .map((entry: [string, Meme]) => entry[1]);
+      const memes = [...new Set(matchedMemes)];
       this.$emit("update:matches", memes);
       this.$emit("update:modelValue", this.searchText);
     },

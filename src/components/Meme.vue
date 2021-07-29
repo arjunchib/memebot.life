@@ -6,13 +6,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, PropType } from "vue";
+import { Meme } from "../models";
 
 export default defineComponent({
   name: "Meme",
   props: {
     meme: {
-      type: Object,
+      type: Object as PropType<Meme>,
       required: true,
     },
     searchText: {
@@ -21,27 +22,27 @@ export default defineComponent({
     },
   },
   data() {
-    return { audio: undefined };
+    return { audio: undefined as unknown as HTMLAudioElement };
   },
   computed: {
-    commands() {
+    commands(): string {
       return this.meme.commands.join(", ");
     },
-    audioURL() {
+    audioURL(): string {
       return this.meme.audio.startsWith("http")
         ? this.meme.audio
         : `http://localhost:3000${this.meme.audio}`;
     },
   },
   methods: {
-    highlight(str: string) {
+    highlight(str: string): string {
       return str.replace(RegExp(this.searchText, "gi"), "<b>$&</b>");
     },
-    play() {
+    play(): void {
       if (!this.audio) {
         this.audio = new Audio(this.audioURL);
       }
-      this.audio.play();
+      this.audio?.play();
     },
   },
 });

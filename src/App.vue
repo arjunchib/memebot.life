@@ -10,7 +10,7 @@
     </a>
   </header>
   <main class="memes">
-    <Meme
+    <MemeComponent
       v-for="meme of memes"
       :key="meme.id"
       :meme="meme"
@@ -24,32 +24,33 @@
 import { defineComponent } from "vue";
 import axios from "axios";
 import SearchBar from "./components/SearchBar.vue";
-import Meme from "./components/Meme.vue";
+import MemeComponent from "./components/Meme.vue";
 import memebotIcon from "./assets/icons/memebot.svg";
+import { Meme } from "./models";
 
 export default defineComponent({
   name: "App",
   components: {
     SearchBar,
-    Meme,
+    MemeComponent,
   },
   data() {
     return {
-      memes: [],
-      matches: [],
+      memes: [] as Meme[],
+      matches: [] as Meme[],
       searchText: "",
       memebotIcon,
     };
   },
   async created() {
     const res = await axios.get("/memes.json");
-    this.memes = res.data;
-    this.matches = res.data;
+    this.memes = res.data as Meme[];
+    this.matches = res.data as Meme[];
   },
   methods: {
-    memeStyle(meme: any) {
+    memeStyle(meme: Meme) {
       const isSelected = this.matches.find(
-        (match: any) => match.id === meme.id
+        (match: Meme) => match.id === meme.id
       );
       return {
         order: isSelected ? "" : "1",
