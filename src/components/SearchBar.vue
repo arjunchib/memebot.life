@@ -73,5 +73,6 @@ export default defineComponent({
   border: 2px solid black;
   border-radius: 7px;
   padding: 7px;
+  font-family: Fraunces;
 }
 </style>
