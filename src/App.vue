@@ -70,6 +70,7 @@ header {
 
 .icon {
   height: 24px;
+  aspect-ratio: 1;
 }
 
 .title {

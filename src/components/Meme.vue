@@ -36,6 +36,7 @@ export default defineComponent({
   },
   methods: {
     highlight(str: string): string {
+      if (this.searchText.length <= 1) return str;
       return str.replace(RegExp(this.searchText, "gi"), "<b>$&</b>");
     },
     play(): void {

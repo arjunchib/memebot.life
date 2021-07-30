@@ -46,12 +46,15 @@ export default defineComponent({
   },
   methods: {
     onInput() {
-      const matchedMemes = [...this.memeMap.entries()]
-        .filter(([name]) => {
-          return name.toLowerCase().includes(this.searchText.toLowerCase());
-        })
-        .map((entry: [string, Meme]) => entry[1]);
-      const memes = [...new Set(matchedMemes)];
+      let memes = this.memes;
+      if (this.searchText.length > 1) {
+        const matchedMemes = [...this.memeMap.entries()]
+          .filter(([name]) => {
+            return name.toLowerCase().includes(this.searchText.toLowerCase());
+          })
+          .map((entry: [string, Meme]) => entry[1]);
+        memes = [...new Set(matchedMemes)];
+      }
       this.$emit("update:matches", memes);
       this.$emit("update:modelValue", this.searchText);
     },
