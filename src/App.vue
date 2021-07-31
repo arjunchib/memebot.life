@@ -1,9 +1,9 @@
 <template>
   <header>
-    <img class="icon" :src="memebotIcon" /><span class="title">memebot</span>
+    <div class="title"><img class="icon" :src="memebotIcon" />memebot</div>
     <SearchBar v-model="searchText" v-model:matches="matches" :memes="memes" />
     <a
-      class="btn"
+      class="btn add"
       href="https://discord.com/api/oauth2/authorize?client_id=350733228098715658&permissions=2048&scope=bot"
     >
       Add to server
@@ -15,7 +15,7 @@
       :key="meme.id"
       :meme="meme"
       :search-text="searchText"
-      :style="memeStyle(meme)"
+      :hide="!isSelected(meme)"
     />
   </main>
 </template>
@@ -48,14 +48,8 @@ export default defineComponent({
     this.matches = res.data as Meme[];
   },
   methods: {
-    memeStyle(meme: Meme) {
-      const isSelected = this.matches.find(
-        (match: Meme) => match.id === meme.id
-      );
-      return {
-        order: isSelected ? "" : "1",
-        visibility: isSelected ? "" : "hidden",
-      };
+    isSelected(meme: Meme) {
+      return this.matches.find((match: Meme) => match.id === meme.id);
     },
   },
 });
@@ -63,30 +57,82 @@ export default defineComponent({
 
 <style scoped>
 header {
-  display: flex;
+  display: grid;
   align-items: center;
   margin-bottom: 10px;
-}
-
-.icon {
-  height: 24px;
-  aspect-ratio: 1;
+  grid:
+    "title search add" auto /
+    auto 1fr auto;
+  gap: 20px;
+  justify-items: space-between;
+  position: sticky;
+  top: 0;
+  padding: 8px 0;
+  background: linear-gradient(
+    rgba(255, 255, 255, 0.99) 80%,
+    rgba(255, 255, 255, 0)
+  );
+  margin: 0 8px 10px;
+  border-radius: 0 0 7px;
 }
 
 .title {
   font-size: 24px;
   font-weight: 900;
-  margin-left: 10px;
+  grid-area: title;
+}
+
+.icon {
+  height: 24px;
+  aspect-ratio: 1;
+  margin-right: 10px;
+  vertical-align: middle;
 }
 
 .search-bar {
-  margin: 20px auto;
-  display: block;
+  grid-area: search;
+  width: 0;
+  min-width: 100%;
+  justify-self: stretch;
+  margin: 0;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px,
+    rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;
+}
+
+.add {
+  grid-area: add;
+  justify-self: end;
+  background: white;
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
 }
 
 .memes {
   display: grid;
   grid: auto / repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
+  margin: 5px;
+}
+
+.meme {
+  margin: 5px;
+}
+
+@media screen and (max-width: 800px) {
+  header {
+    grid:
+      "title add" auto
+      "search search" auto /
+      auto auto;
+    gap: 10px;
+    top: -50px;
+    border-radius: 0 0 7px;
+    background: rgba(255, 255, 255, 0.92);
+    padding-bottom: 0;
+  }
+}
+
+@media screen and (max-width: 330px) {
+  .title {
+    font-size: 15px;
+  }
 }
 </style>

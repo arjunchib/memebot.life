@@ -1,5 +1,5 @@
 <template>
-  <div class="meme" @click="play">
+  <div class="meme" :class="{ hidden: hide }" @click="play">
     <h2 v-html="highlight(meme.name)"></h2>
     <p v-html="highlight(commands)"></p>
   </div>
@@ -19,6 +19,10 @@ export default defineComponent({
     searchText: {
       type: String,
       default: "",
+    },
+    hide: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -59,6 +63,15 @@ export default defineComponent({
 
 .meme:hover {
   background: lightgray;
+}
+
+.hidden {
+  order: 1;
+  visibility: hidden;
+  height: 0;
+  padding: 0;
+  border: 0;
+  margin: 0 !important;
 }
 
 h2 {
