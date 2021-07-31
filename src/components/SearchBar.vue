@@ -69,5 +69,8 @@ export default defineComponent({
   border-radius: 7px;
   padding: 7px;
   font-family: Fraunces;
+  appearance: none;
+  -webkit-appearance: none;
+  color: gray;
 }
 </style>

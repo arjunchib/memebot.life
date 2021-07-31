@@ -64,7 +64,6 @@ header {
     "title search add" auto /
     auto 1fr auto;
   gap: 20px;
-  justify-items: space-between;
   position: sticky;
   top: 0;
   padding: 8px 0;
@@ -73,7 +72,7 @@ header {
     rgba(255, 255, 255, 0)
   );
   margin: 0 8px 10px;
-  border-radius: 0 0 7px;
+  border-radius: 0 0 7px 7px;
 }
 
 .title {
@@ -110,6 +109,7 @@ header {
   display: grid;
   grid: auto / repeat(auto-fit, minmax(250px, 1fr));
   margin: 5px;
+  margin-bottom: 40px;
 }
 
 .meme {
@@ -124,7 +124,7 @@ header {
       auto auto;
     gap: 10px;
     top: -50px;
-    border-radius: 0 0 7px;
+    border-radius: 0 0 7px 7px;
     background: rgba(255, 255, 255, 0.92);
     padding-bottom: 0;
   }
