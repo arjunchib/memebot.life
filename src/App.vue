@@ -3,7 +3,7 @@
     <div class="title">
       <img class="icon" src="./assets/icons/memebot.svg" />memebot
     </div>
-    <SearchBar v-model="searchText" v-model:matches="matches" :memes="memes" />
+    <SearchBar v-model="searchText" />
     <a
       class="btn add"
       href="https://discord.com/api/oauth2/authorize?client_id=350733228098715658&permissions=2048&scope=bot"
@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { computed, defineComponent, ref } from "vue";
 import axios from "axios";
 import SearchBar from "./components/SearchBar.vue";
 import MemeComponent from "./components/Meme.vue";
@@ -37,19 +37,25 @@ export default defineComponent({
   },
   setup() {
     const memes = ref([] as Meme[]);
-    const matches = ref([] as Meme[]);
     const searchText = ref("");
 
     axios.get("/memes.json").then(({ data }) => {
       memes.value = data as Meme[];
-      matches.value = data as Meme[];
+    });
+
+    const matches = computed((): Meme[] => {
+      return memes.value.filter((meme) => {
+        return [meme.name, ...meme.commands]
+          .map((str) => str.toLowerCase())
+          .some((str) => str.includes(searchText.value.toLowerCase()));
+      });
     });
 
     const isSelected = (meme: Meme): boolean => {
       return !!matches.value.find((match: Meme) => match.id === meme.id);
     };
 
-    return { memes, matches, searchText, isSelected };
+    return { memes, searchText, matches, isSelected };
   },
 });
 </script>
