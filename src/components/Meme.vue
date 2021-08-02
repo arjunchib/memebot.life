@@ -11,8 +11,6 @@
 import { computed, defineComponent, PropType } from "vue";
 import { Meme } from "../models";
 
-let audio: HTMLAudioElement | undefined;
-
 export default defineComponent({
   name: "Meme",
   props: {
@@ -30,6 +28,7 @@ export default defineComponent({
     },
   },
   setup(props) {
+    let audio: HTMLAudioElement | undefined;
     const audioURL = computed((): string => {
       return props.meme.audio.startsWith("http")
         ? props.meme.audio
