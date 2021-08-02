@@ -9,9 +9,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from "vue";
+import { defineComponent, PropType, ref, toRefs, watch } from "vue";
 import { Meme } from "../models";
 
+const memeMap = new Map<string, Meme>();
 export default defineComponent({
   name: "SearchBar",
   props: {
@@ -25,39 +26,36 @@ export default defineComponent({
     },
     modelValue: {
       type: String,
-      required: true,
+      default: "",
     },
   },
   emits: ["update:matches", "update:modelValue"],
-  data() {
-    return {
-      searchText: "",
-      memeMap: new Map<string, Meme>(),
-    };
-  },
-  watch: {
-    memes() {
-      this.memes.forEach((meme: Meme) => {
+  setup(props, { emit }) {
+    const searchText = ref("");
+    const { memes } = toRefs(props);
+
+    watch(memes, () => {
+      memes.value.forEach((meme: Meme) => {
         return [meme.name, ...meme.commands].forEach((name) =>
-          this.memeMap.set(name, meme)
+          memeMap.set(name, meme)
         );
       });
-    },
-  },
-  methods: {
-    onInput() {
-      let memes = this.memes;
-      if (this.searchText.length > 1) {
-        const matchedMemes = [...this.memeMap.entries()]
-          .filter(([name]) => {
-            return name.toLowerCase().includes(this.searchText.toLowerCase());
-          })
-          .map((entry: [string, Meme]) => entry[1]);
-        memes = [...new Set(matchedMemes)];
+    });
+
+    const onInput = () => {
+      emit("update:modelValue", searchText.value);
+      if (searchText.value.length <= 1) {
+        return emit("update:matches", memes.value);
       }
-      this.$emit("update:matches", memes);
-      this.$emit("update:modelValue", this.searchText);
-    },
+      const matchedMemes = [...memeMap.entries()]
+        .filter(([name]) => {
+          return name.toLowerCase().includes(searchText.value.toLowerCase());
+        })
+        .map((entry: [string, Meme]) => entry[1]);
+      emit("update:matches", [...new Set(matchedMemes)]);
+    };
+
+    return { searchText, onInput };
   },
 });
 </script>

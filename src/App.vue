@@ -1,6 +1,8 @@
 <template>
   <header>
-    <div class="title"><img class="icon" :src="memebotIcon" />memebot</div>
+    <div class="title">
+      <img class="icon" src="./assets/icons/memebot.svg" />memebot
+    </div>
     <SearchBar v-model="searchText" v-model:matches="matches" :memes="memes" />
     <a
       class="btn add"
@@ -21,11 +23,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import axios from "axios";
 import SearchBar from "./components/SearchBar.vue";
 import MemeComponent from "./components/Meme.vue";
-import memebotIcon from "./assets/icons/memebot.svg";
 import { Meme } from "./models";
 
 export default defineComponent({
@@ -34,23 +35,21 @@ export default defineComponent({
     SearchBar,
     MemeComponent,
   },
-  data() {
-    return {
-      memes: [] as Meme[],
-      matches: [] as Meme[],
-      searchText: "",
-      memebotIcon,
+  setup() {
+    const memes = ref([] as Meme[]);
+    const matches = ref([] as Meme[]);
+    const searchText = ref("");
+
+    axios.get("/memes.json").then(({ data }) => {
+      memes.value = data as Meme[];
+      matches.value = data as Meme[];
+    });
+
+    const isSelected = (meme: Meme): boolean => {
+      return !!matches.value.find((match: Meme) => match.id === meme.id);
     };
-  },
-  async created() {
-    const res = await axios.get("/memes.json");
-    this.memes = res.data as Meme[];
-    this.matches = res.data as Meme[];
-  },
-  methods: {
-    isSelected(meme: Meme) {
-      return this.matches.find((match: Meme) => match.id === meme.id);
-    },
+
+    return { memes, matches, searchText, isSelected };
   },
 });
 </script>

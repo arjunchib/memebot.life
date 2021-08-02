@@ -1,13 +1,17 @@
 <template>
   <div class="meme" :class="{ hidden: hide }" @click="play">
+    <!-- eslint-disable vue/no-v-html -->
     <h2 v-html="highlight(meme.name)"></h2>
     <p v-html="highlight(commands)"></p>
+    <!-- eslint-enable vue/no-v-html -->
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from "vue";
+import { computed, defineComponent, PropType } from "vue";
 import { Meme } from "../models";
+
+let audio: HTMLAudioElement | undefined;
 
 export default defineComponent({
   name: "Meme",
@@ -25,30 +29,24 @@ export default defineComponent({
       default: false,
     },
   },
-  data() {
-    return { audio: undefined as unknown as HTMLAudioElement };
-  },
-  computed: {
-    commands(): string {
-      return this.meme.commands.join(", ");
-    },
-    audioURL(): string {
-      return this.meme.audio.startsWith("http")
-        ? this.meme.audio
-        : `http://localhost:3000${this.meme.audio}`;
-    },
-  },
-  methods: {
-    highlight(str: string): string {
-      if (this.searchText.length <= 1) return str;
-      return str.replace(RegExp(this.searchText, "gi"), "<b>$&</b>");
-    },
-    play(): void {
-      if (!this.audio) {
-        this.audio = new Audio(this.audioURL);
-      }
-      this.audio?.play();
-    },
+  setup(props) {
+    const audioURL = computed((): string => {
+      return props.meme.audio.startsWith("http")
+        ? props.meme.audio
+        : `http://localhost:3000${props.meme.audio}`;
+    });
+    const commands = computed((): string => {
+      return props.meme.commands.join(", ");
+    });
+    const highlight = (str: string): string => {
+      if (props.searchText.length <= 1) return str;
+      return str.replace(RegExp(props.searchText, "gi"), "<b>$&</b>");
+    };
+    const play = (): void => {
+      if (!audio) audio = new Audio(audioURL.value);
+      audio?.play();
+    };
+    return { audioURL, commands, highlight, play };
   },
 });
 </script>
